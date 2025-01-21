@@ -1,7 +1,7 @@
-Shopping Cart Application
+            Shopping Cart Application
 A simple e-commerce shopping cart app built with React. Users can browse a list of products, add them to their cart, remove items from the cart, and view the total price. The cart is saved to localStorage to persist between page reloads. Products can be sorted by name or price, and users can search for products by name.
 
-Features
+                    Features
 Product List: A static list of products with names and prices.
 Search: Users can search for products by name.
 Sorting: Users can sort the product list by:
