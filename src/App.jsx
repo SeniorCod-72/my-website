@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 function App() {
+  // List of products with id, name, and price
   const productList = [
     { "id": 1, "name": "T-Shirt", "price": 20 },
     { "id": 2, "name": "Jeans", "price": 40 },
@@ -9,68 +10,79 @@ function App() {
     { "id": 5, "name": "Socks", "price": 5 }
   ];
 
+  // State to store cart items, retrieved from localStorage if available
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  // State to track sorting option and search query
   const [sortOption, setSortOption] = useState('name-asc');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Function to add a product to the cart
   const addToCart = (product) => {
     setCart((prevCart) => {
       const existingProduct = prevCart.find(item => item.id === product.id);
 
       if (existingProduct) {
+        // If product already exists, increase quantity
         return prevCart.map(item =>
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       } else {
+        // If product is new, add it with quantity 1
         return [...prevCart, { ...product, quantity: 1 }];
       }
     });
   };
 
+  // Function to remove a product or decrease its quantity in the cart
   const removeFromCart = (productId) => {
     setCart((prevCart) => {
       return prevCart
         .map(item =>
           item.id === productId && item.quantity > 1
-            ? { ...item, quantity: item.quantity - 1 }
+            ? { ...item, quantity: item.quantity - 1 } // Decrease quantity
             : item
         )
-        .filter(item => item.quantity > 0);
+        .filter(item => item.quantity > 0); // Remove item if quantity is 0
     });
   };
 
+  // Function to clear the entire cart
   const clearCart = () => {
     setCart([]);
   };
 
+  // Function to calculate the total price of items in the cart
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
   };
 
+  // Function to sort products based on the selected sorting option
   const sortProducts = () => {
     let sortedProducts = [...productList];
 
     if (sortOption === 'name-asc') {
-      sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+      sortedProducts.sort((a, b) => a.name.localeCompare(b.name)); // Sort A-Z by name
     } else if (sortOption === 'name-desc') {
-      sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+      sortedProducts.sort((a, b) => b.name.localeCompare(a.name)); // Sort Z-A by name
     } else if (sortOption === 'price-asc') {
-      sortedProducts.sort((a, b) => a.price - b.price);
+      sortedProducts.sort((a, b) => a.price - b.price); // Sort by price (low to high)
     } else if (sortOption === 'price-desc') {
-      sortedProducts.sort((a, b) => b.price - a.price);
+      sortedProducts.sort((a, b) => b.price - a.price); // Sort by price (high to low)
     }
 
     return sortedProducts;
   };
 
+  // Filter products based on the search query and sorting option
   const filteredProducts = sortProducts().filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Save cart state to localStorage whenever cart changes
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
@@ -79,6 +91,7 @@ function App() {
     <div>
       <h1>Product List</h1>
 
+      {/* Search input and sorting dropdown */}
       <div className="search-sort-container">
         <input
           type="text"
@@ -95,6 +108,7 @@ function App() {
         </select>
       </div>
 
+      {/* Display list of products */}
       <div className='product-list'>
         {filteredProducts.map(product => (
           <div key={product.id} className='product'>
@@ -105,6 +119,7 @@ function App() {
         ))}
       </div>
 
+      {/* Shopping Cart Section */}
       <div className="cart">
         <h2>Shopping Cart</h2>
         {cart.length === 0 ? (
